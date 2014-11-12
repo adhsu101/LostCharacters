@@ -14,6 +14,7 @@
 @property (strong, nonatomic) IBOutlet UITextField *akaTextField;
 @property (strong, nonatomic) IBOutlet UITextField *ageTextField;
 @property (strong, nonatomic) IBOutlet UITextField *originTextField;
+@property (strong, nonatomic) IBOutlet UIView *textFieldBorder;
 
 @end
 
@@ -23,16 +24,11 @@
 {
     [super viewDidLoad];
 
-//    if (self.character != nil)
-//    {
-
-        self.passengerTextField.placeholder = [self.character valueForKey:@"passenger"];
-        self.actorTextField.placeholder = [self.character valueForKey:@"actor"];
-        self.akaTextField.placeholder = [self.character valueForKey:@"aka"];
-        self.ageTextField.placeholder = [self.character valueForKey:@"age"];
-        self.originTextField.placeholder = [self.character valueForKey:@"origin"];
-
-//    }
+    self.passengerTextField.text = [self.character valueForKey:@"passenger"];
+    self.actorTextField.text = [self.character valueForKey:@"actor"];
+    self.akaTextField.text = [self.character valueForKey:@"aka"];
+    self.ageTextField.text = [self.character valueForKey:@"age"];
+    self.originTextField.text = [self.character valueForKey:@"origin"];
 
 }
 
@@ -70,6 +66,10 @@
     {
         [self.character setValue:self.originTextField.text forKey:@"origin"];
     }
+
+    [self.moc save:nil];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+
 }
 
 @end

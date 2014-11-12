@@ -9,6 +9,7 @@
 #import "RootViewController.h"
 #import "AppDelegate.h"
 #import "DetailViewController.h"
+#import "CharacterTableViewCell.h"
 
 @interface RootViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate, UIBarPositioningDelegate>
 
@@ -31,7 +32,8 @@
 
 @implementation RootViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
 
     [super viewDidLoad];
 
@@ -43,21 +45,25 @@
     AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     self.moc = delegate.managedObjectContext;
 
-    [self loadDB];
-
-    if (self.characters.count == 0)
-    {
-        [self loadPlist];
-    }
-
 }
 
 
 - (void)viewWillAppear:(BOOL)animated
 {
 
+    [super viewWillAppear:animated];
+
     NSIndexPath *path = [self.tableView indexPathForSelectedRow];
     [self.tableView deselectRowAtIndexPath:path animated:YES];
+
+    // refresh screen
+
+    [self loadDB];
+
+    if (self.characters.count == 0)
+    {
+        [self loadPlist];
+    }
 
 }
 
@@ -71,9 +77,14 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSManagedObject *character = self.characters[indexPath.row];
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    cell.textLabel.text = [character valueForKey:@"passenger"];
-    cell.detailTextLabel.text = [character valueForKey:@"actor"];
+    CharacterTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    cell.characterLabel.text = [character valueForKey:@"passenger"];
+    cell.avatarView.image = [UIImage imageNamed:@"lost"];
+    cell.actorLabel.text = [character valueForKey:@"actor"];
+    cell.akaLabel.text = [character valueForKey:@"aka"];
+    cell.originLabel.text = [character valueForKey:@"origin"];
+    cell.ageLabel.text = [character valueForKey:@"age"];
+
     return cell;
 }
 
@@ -81,6 +92,7 @@
 {
     [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
     [self deleteCharacter];
+    [self checkEmpty];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -102,7 +114,16 @@
 {
 
     [self deleteCharacter];
+    [self checkEmpty];
     [self toggleEditing];
+
+}
+
+- (void)hideFilterBar
+{
+
+    [self.filterBar removeFromSuperview];
+    self.topTableViewConstraint.constant = self.originalTopConstant;
 
 }
 
@@ -119,8 +140,7 @@
     }
     else
     {
-        [self.filterBar removeFromSuperview];
-        self.topTableViewConstraint.constant = self.originalTopConstant;
+        [self hideFilterBar];
     }
 
     [self.view layoutSubviews];
@@ -128,6 +148,28 @@
 }
 
 #pragma mark - helper methods
+
+- (void)checkEmpty
+{
+    if (self.characters.count == 0)
+    {
+        self.editButton.enabled = NO;
+    }
+    else
+    {
+        self.editButton.enabled = YES;
+    }
+    
+    if (self.characters.count <= 1)
+    {
+        self.filterButton.enabled = NO;
+        [self hideFilterBar];
+    }
+    else
+    {
+        self.filterButton.enabled = YES;
+    }
+}
 
 - (void)loadDB
 {
@@ -139,24 +181,7 @@
 
     self.characters = [[self.moc executeFetchRequest:request error:nil] mutableCopy];
 
-    if (self.characters.count == 0)
-    {
-        self.editButton.enabled = NO;
-    }
-    else
-    {
-        self.editButton.enabled = YES;
-    }
-
-    if (self.characters.count <= 1)
-    {
-        self.filterButton.enabled = NO;
-    }
-    else
-    {
-        self.filterButton.enabled = YES;
-    }
-
+    [self checkEmpty];
 
     [self.tableView reloadData];
     
@@ -233,7 +258,6 @@
     // Tell the tableView that we deleted the objects
     [self.tableView deleteRowsAtIndexPaths:selectedIndexPaths withRowAnimation:UITableViewRowAnimationTop];
 
-    [self loadDB];
 }
 
 
@@ -267,11 +291,11 @@
     
 }
 
-- (IBAction)unwindSegue:(UIStoryboardSegue *)sender
-{
-
-    [self loadDB];
-
-}
+//- (IBAction)unwindSegue:(UIStoryboardSegue *)sender
+//{
+//
+//    [self loadDB];
+//
+//}
 
 @end
