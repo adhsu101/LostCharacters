@@ -10,14 +10,22 @@
 #import "AppDelegate.h"
 #import "DetailViewController.h"
 
-@interface RootViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate>
+@interface RootViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate, UIBarPositioningDelegate>
 
 @property NSManagedObjectContext *moc;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property NSArray *characters;
+@property NSMutableArray *characters;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *addButton;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *deleteButton;
-@property (strong, nonatomic) IBOutlet UIToolbar *customToolbar;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *editButton;
+@property (strong, nonatomic) IBOutlet UIToolbar *bottomToolbar;
+@property (strong, nonatomic) IBOutlet UIToolbar *filterBar;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *filterButton;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint *topTableViewConstraint;
+@property NSInteger originalTopConstant;
+@property (strong, nonatomic) IBOutlet UITextField *filterTextField;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *filterSegmentedControl;
+
 
 @end
 
@@ -27,9 +35,10 @@
 
     [super viewDidLoad];
 
-    NSMutableArray *toolbarButtons = [self.customToolbar.items mutableCopy];
+    NSMutableArray *toolbarButtons = [self.bottomToolbar.items mutableCopy];
     [toolbarButtons removeObject:self.deleteButton];
-    [self.customToolbar setItems:toolbarButtons];
+    [self.bottomToolbar setItems:toolbarButtons];
+    self.originalTopConstant = self.topTableViewConstraint.constant;
 
     AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     self.moc = delegate.managedObjectContext;
@@ -42,6 +51,7 @@
     }
 
 }
+
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -69,7 +79,8 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
+    [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionBottom];
+    [self deleteCharacter];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -81,31 +92,38 @@
 
 - (IBAction)onEditButtonPressed:(UIBarButtonItem *)button
 {
-    NSMutableArray *toolbarButtons = [self.customToolbar.items mutableCopy];
 
-    if ([self.tableView isEditing])
-    {
-        [self.tableView setEditing:NO];
-        button.title = @"Edit";
-        [toolbarButtons addObject:self.addButton];
-        [toolbarButtons removeObject:self.deleteButton];
-        [self.customToolbar setItems:toolbarButtons animated:YES];
-
-    }
-    else
-    {
-        [self.tableView setEditing:YES];
-        button.title = @"Cancel";
-        [toolbarButtons addObject:self.deleteButton];
-        [toolbarButtons removeObject:self.addButton];
-        [self.customToolbar setItems:toolbarButtons animated:YES];
-
-    }
+    [self toggleEditing];
 
 }
 
+
 - (IBAction)onDeleteButtonPressed:(UIBarButtonItem *)sender
 {
+
+    [self deleteCharacter];
+    [self toggleEditing];
+
+}
+
+- (IBAction)onFilterButtonPressed:(UIBarButtonItem *)sender
+{
+
+    if (![self.view.subviews containsObject:self.filterBar])
+    {
+        [self.view addSubview:self.filterBar];
+        CGRect screenRect = [UIScreen mainScreen].bounds;
+        CGFloat screenWidth = screenRect.size.width;
+        self.filterBar.frame = CGRectMake(0, 64 , screenWidth, self.filterBar.frame.size.height);
+        self.topTableViewConstraint.constant = 44;
+    }
+    else
+    {
+        [self.filterBar removeFromSuperview];
+        self.topTableViewConstraint.constant = self.originalTopConstant;
+    }
+
+    [self.view layoutSubviews];
 
 }
 
@@ -119,7 +137,7 @@
     request.sortDescriptors = @[sortByName];
 //    request.predicate = [NSPredicate predicateWithFormat:@"age <= 150"];
 
-    self.characters = [self.moc executeFetchRequest:request error:nil];
+    self.characters = [[self.moc executeFetchRequest:request error:nil] mutableCopy];
     [self.tableView reloadData];
     
 }
@@ -145,6 +163,59 @@
     [self loadDB];
 
 }
+
+- (void)toggleEditing
+{
+
+    NSMutableArray *toolbarButtons = [self.bottomToolbar.items mutableCopy];
+
+    if ([self.tableView isEditing])
+    {
+        [self.tableView setEditing:NO];
+        self.editButton.title = @"Edit";
+        [toolbarButtons addObject:self.addButton];
+        [toolbarButtons removeObject:self.deleteButton];
+        [self.bottomToolbar setItems:toolbarButtons animated:YES];
+
+    }
+    else
+    {
+        [self.tableView setEditing:YES];
+        self.editButton.title = @"Cancel";
+        [toolbarButtons addObject:self.deleteButton];
+        [toolbarButtons removeObject:self.addButton];
+        [self.bottomToolbar setItems:toolbarButtons animated:YES];
+
+    }
+
+}
+
+- (void)deleteCharacter
+{
+    NSArray *selectedIndexPaths = [self.tableView indexPathsForSelectedRows];
+
+    for (NSIndexPath *i in selectedIndexPaths)
+    {
+        NSManagedObject *deletedCharacter = self.characters[i.row];
+        [self.moc deleteObject:deletedCharacter];
+        [self.moc save:nil];
+    }
+
+    NSMutableIndexSet *indicesOfItemsToDelete = [NSMutableIndexSet new];
+    for (NSIndexPath *selectionIndex in selectedIndexPaths)
+    {
+        [indicesOfItemsToDelete addIndex:selectionIndex.row];
+    }
+    // Delete the objects from our data model.
+
+    [self.characters removeObjectsAtIndexes:indicesOfItemsToDelete];
+
+    // Tell the tableView that we deleted the objects
+    [self.tableView deleteRowsAtIndexPaths:selectedIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+
+    [self.tableView reloadData];
+}
+
 
 #pragma mark - segue life cycle
 
