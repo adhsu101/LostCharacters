@@ -79,7 +79,7 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionBottom];
+    [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
     [self deleteCharacter];
 }
 
@@ -138,6 +138,26 @@
 //    request.predicate = [NSPredicate predicateWithFormat:@"age <= 150"];
 
     self.characters = [[self.moc executeFetchRequest:request error:nil] mutableCopy];
+
+    if (self.characters.count == 0)
+    {
+        self.editButton.enabled = NO;
+    }
+    else
+    {
+        self.editButton.enabled = YES;
+    }
+
+    if (self.characters.count <= 1)
+    {
+        self.filterButton.enabled = NO;
+    }
+    else
+    {
+        self.filterButton.enabled = YES;
+    }
+
+
     [self.tableView reloadData];
     
 }
@@ -211,9 +231,9 @@
     [self.characters removeObjectsAtIndexes:indicesOfItemsToDelete];
 
     // Tell the tableView that we deleted the objects
-    [self.tableView deleteRowsAtIndexPaths:selectedIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView deleteRowsAtIndexPaths:selectedIndexPaths withRowAnimation:UITableViewRowAnimationTop];
 
-    [self.tableView reloadData];
+    [self loadDB];
 }
 
 
