@@ -6,12 +6,13 @@
 //  Copyright (c) 2014 Alex Hsu. All rights reserved.
 //
 
-#import "RootViewController.h"
+#import "CharacterViewController.h"
 #import "AppDelegate.h"
 #import "DetailViewController.h"
 #import "CharacterTableViewCell.h"
+#define kFilterBarOffsetFromTopLayout 64
 
-@interface RootViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate, UIBarPositioningDelegate>
+@interface CharacterViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate, UIBarPositioningDelegate>
 
 @property NSManagedObjectContext *moc;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
@@ -26,11 +27,13 @@
 @property NSInteger originalTopConstant;
 @property (strong, nonatomic) IBOutlet UITextField *filterTextField;
 @property (strong, nonatomic) IBOutlet UISegmentedControl *filterSegmentedControl;
+@property CGRect hiddenFrame;
+@property CGRect notHiddenFrame;
 
 
 @end
 
-@implementation RootViewController
+@implementation CharacterViewController
 
 - (void)viewDidLoad
 {
@@ -42,6 +45,17 @@
     [self.bottomToolbar setItems:toolbarButtons];
     self.originalTopConstant = self.topTableViewConstraint.constant;
 
+    // set filter bar
+    [self.view addSubview:self.filterBar];
+    CGRect screenRect = [UIScreen mainScreen].bounds;
+    CGFloat screenWidth = screenRect.size.width;
+    self.hiddenFrame = CGRectMake(0, kFilterBarOffsetFromTopLayout - self.filterBar.frame.size.height, screenWidth, self.filterBar.frame.size.height);
+    self.notHiddenFrame = CGRectMake(0, kFilterBarOffsetFromTopLayout, screenWidth, self.filterBar.frame.size.height);
+
+    self.filterBar.frame = self.hiddenFrame;
+    self.filterBar.alpha = 0.0;
+
+    // set moc
     AppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     self.moc = delegate.managedObjectContext;
 
@@ -122,25 +136,43 @@
 - (void)hideFilterBar
 {
 
-    [self.filterBar removeFromSuperview];
-    self.topTableViewConstraint.constant = self.originalTopConstant;
+    [UIView animateWithDuration:0.2 animations:^{
 
+        self.topTableViewConstraint.constant = self.originalTopConstant;
+        self.filterBar.frame = self.hiddenFrame;
+        self.filterBar.alpha = 0.0;
+        [self.view layoutIfNeeded];
+
+    }];
+
+}
+
+- (void)showFilterBar
+{
+    [UIView animateWithDuration:0.2 animations:^{
+        
+        self.topTableViewConstraint.constant = self.topTableViewConstraint.constant + self.filterBar.frame.size.height;
+        self.filterBar.frame = self.notHiddenFrame;
+        self.filterBar.alpha = 1.0;
+        [self.view layoutIfNeeded];
+        
+    }];
 }
 
 - (IBAction)onFilterButtonPressed:(UIBarButtonItem *)sender
 {
 
-    if (![self.view.subviews containsObject:self.filterBar])
+    if (self.filterBar.alpha == 0.0)
     {
-        [self.view addSubview:self.filterBar];
-        CGRect screenRect = [UIScreen mainScreen].bounds;
-        CGFloat screenWidth = screenRect.size.width;
-        self.filterBar.frame = CGRectMake(0, 64 , screenWidth, self.filterBar.frame.size.height);
-        self.topTableViewConstraint.constant = 44;
+
+        [self showFilterBar];
+
     }
     else
     {
+
         [self hideFilterBar];
+
     }
 
     [self.view layoutSubviews];

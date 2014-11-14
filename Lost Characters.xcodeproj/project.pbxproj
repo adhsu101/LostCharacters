@@ -10,7 +10,7 @@
 		8D1250001A12BDAA003948BC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D124FFF1A12BDAA003948BC /* main.m */; };
 		8D1250031A12BDAA003948BC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1250021A12BDAA003948BC /* AppDelegate.m */; };
 		8D1250061A12BDAA003948BC /* Lost_Characters.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8D1250041A12BDAA003948BC /* Lost_Characters.xcdatamodeld */; };
-		8D1250091A12BDAA003948BC /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1250081A12BDAA003948BC /* RootViewController.m */; };
+		8D1250091A12BDAA003948BC /* CharacterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1250081A12BDAA003948BC /* CharacterViewController.m */; };
 		8D12500C1A12BDAA003948BC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D12500A1A12BDAA003948BC /* Main.storyboard */; };
 		8D1250111A12BDAA003948BC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8D12500F1A12BDAA003948BC /* LaunchScreen.xib */; };
 		8D12501D1A12BDAA003948BC /* Lost_CharactersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D12501C1A12BDAA003948BC /* Lost_CharactersTests.m */; };
@@ -37,8 +37,8 @@
 		8D1250011A12BDAA003948BC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8D1250021A12BDAA003948BC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8D1250051A12BDAA003948BC /* Lost_Characters.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Lost_Characters.xcdatamodel; sourceTree = "<group>"; };
-		8D1250071A12BDAA003948BC /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
-		8D1250081A12BDAA003948BC /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		8D1250071A12BDAA003948BC /* CharacterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CharacterViewController.h; sourceTree = "<group>"; };
+		8D1250081A12BDAA003948BC /* CharacterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CharacterViewController.m; sourceTree = "<group>"; };
 		8D12500B1A12BDAA003948BC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8D1250101A12BDAA003948BC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		8D1250161A12BDAA003948BC /* Lost CharactersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Lost CharactersTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -94,8 +94,8 @@
 			children = (
 				8D1250011A12BDAA003948BC /* AppDelegate.h */,
 				8D1250021A12BDAA003948BC /* AppDelegate.m */,
-				8D1250071A12BDAA003948BC /* RootViewController.h */,
-				8D1250081A12BDAA003948BC /* RootViewController.m */,
+				8D1250071A12BDAA003948BC /* CharacterViewController.h */,
+				8D1250081A12BDAA003948BC /* CharacterViewController.m */,
 				8D8629E81A12D7C900AFD1FB /* DetailViewController.h */,
 				8D8629E91A12D7C900AFD1FB /* DetailViewController.m */,
 				8D8629EB1A13C3C400AFD1FB /* CharacterTableViewCell.h */,
@@ -240,7 +240,7 @@
 				8D8629ED1A13C3C400AFD1FB /* CharacterTableViewCell.m in Sources */,
 				8D1250031A12BDAA003948BC /* AppDelegate.m in Sources */,
 				8D1250061A12BDAA003948BC /* Lost_Characters.xcdatamodeld in Sources */,
-				8D1250091A12BDAA003948BC /* RootViewController.m in Sources */,
+				8D1250091A12BDAA003948BC /* CharacterViewController.m in Sources */,
 				8D1250001A12BDAA003948BC /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
