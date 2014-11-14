@@ -121,7 +121,7 @@
                                     </barButtonItem>
                                     <barButtonItem systemItem="add" id="7VM-8x-TOR">
                                         <connections>
-                                            <segue destination="ZcV-SV-JIA" kind="push" identifier="addSegue" id="Hwo-65-NCo"/>
+                                            <segue destination="ZcV-SV-JIA" kind="modal" identifier="addSegue" id="Hwo-65-NCo"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -316,6 +316,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="o2y-pC-rmD"/>
+        <segue reference="Hwo-65-NCo"/>
     </inferredMetricsTieBreakers>
 </document>

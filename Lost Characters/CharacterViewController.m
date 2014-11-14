@@ -248,20 +248,28 @@
 
     if ([self.tableView isEditing])
     {
-        [self.tableView setEditing:NO];
-        self.editButton.title = @"Edit";
-        [toolbarButtons addObject:self.addButton];
-        [toolbarButtons removeObject:self.deleteButton];
-        [self.bottomToolbar setItems:toolbarButtons animated:YES];
+        [UIView animateWithDuration:0.2 animations:^{
+
+            [self.tableView setEditing:NO];
+            self.editButton.title = @"Edit";
+            [toolbarButtons addObject:self.addButton];
+            [toolbarButtons removeObject:self.deleteButton];
+            [self.bottomToolbar setItems:toolbarButtons animated:YES];
+
+        }];
 
     }
     else
     {
-        [self.tableView setEditing:YES];
-        self.editButton.title = @"Cancel";
-        [toolbarButtons addObject:self.deleteButton];
-        [toolbarButtons removeObject:self.addButton];
-        [self.bottomToolbar setItems:toolbarButtons animated:YES];
+        [UIView animateWithDuration:0.2 animations:^{
+
+            [self.tableView setEditing:YES];
+            self.editButton.title = @"Cancel";
+            [toolbarButtons addObject:self.deleteButton];
+            [toolbarButtons removeObject:self.addButton];
+            [self.bottomToolbar setItems:toolbarButtons animated:YES];
+
+        }];
 
     }
 

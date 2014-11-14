@@ -36,7 +36,7 @@
 
 - (IBAction)onSaveButtonPressed:(UIButton *)sender
 {
-    if (self.character == nil)
+    if (self.character == nil && ![self.passengerTextField.text isEqualToString:@""])
     {
         NSManagedObject *newCharacter = [NSEntityDescription insertNewObjectForEntityForName:@"Character" inManagedObjectContext:self.moc];
         self.character = newCharacter;
@@ -68,7 +68,9 @@
     }
 
     [self.moc save:nil];
+    
     [self.navigationController popToRootViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 
 }
 
