@@ -23,9 +23,11 @@
 @property (strong, nonatomic) IBOutlet UIToolbar *bottomToolbar;
 @property (strong, nonatomic) IBOutlet UIToolbar *filterBar;
 @property (strong, nonatomic) IBOutlet UIBarButtonItem *filterButton;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *filterToggle;
+
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint *topTableViewConstraint;
 @property NSInteger originalTopConstant;
-@property (strong, nonatomic) IBOutlet UITextField *filterTextField;
+
 @property (strong, nonatomic) IBOutlet UISegmentedControl *filterSegmentedControl;
 @property CGRect hiddenFrame;
 @property CGRect notHiddenFrame;
@@ -72,7 +74,7 @@
 
     // refresh screen
 
-    [self loadDB];
+    [self loadDB:@"*"];
 
     if (self.characters.count == 0)
     {
@@ -133,32 +135,6 @@
 
 }
 
-- (void)hideFilterBar
-{
-
-    [UIView animateWithDuration:0.2 animations:^{
-
-        self.topTableViewConstraint.constant = self.originalTopConstant;
-        self.filterBar.frame = self.hiddenFrame;
-        self.filterBar.alpha = 0.0;
-        [self.view layoutIfNeeded];
-
-    }];
-
-}
-
-- (void)showFilterBar
-{
-    [UIView animateWithDuration:0.2 animations:^{
-        
-        self.topTableViewConstraint.constant = self.topTableViewConstraint.constant + self.filterBar.frame.size.height;
-        self.filterBar.frame = self.notHiddenFrame;
-        self.filterBar.alpha = 1.0;
-        [self.view layoutIfNeeded];
-        
-    }];
-}
-
 - (IBAction)onFilterButtonPressed:(UIBarButtonItem *)sender
 {
 
@@ -177,6 +153,18 @@
 
     [self.view layoutSubviews];
 
+}
+
+- (IBAction)onFiltered:(UISegmentedControl *)sender
+{
+    if ([sender selectedSegmentIndex] == 0)
+    {
+        [self loadDB:@"Main Character"];
+    }
+    else
+    {
+        [self loadDB:@"Supporting Character"];
+    }
 }
 
 #pragma mark - helper methods
@@ -203,13 +191,14 @@
     }
 }
 
-- (void)loadDB
+- (void)loadDB:(NSString *)significance
 {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Character"];
 
     NSSortDescriptor *sortByName = [[NSSortDescriptor alloc] initWithKey:@"passenger" ascending:YES];
     request.sortDescriptors = @[sortByName];
-//    request.predicate = [NSPredicate predicateWithFormat:@"age <= 150"];
+
+    request.predicate = [NSPredicate predicateWithFormat:@"significance like %@", significance];
 
     self.characters = [[self.moc executeFetchRequest:request error:nil] mutableCopy];
 
@@ -237,7 +226,7 @@
         [self.moc save:nil];
     }
 
-    [self loadDB];
+    [self loadDB:@"*"];
 
 }
 
@@ -300,6 +289,36 @@
 
 }
 
+- (void)hideFilterBar
+{
+
+    [UIView animateWithDuration:0.2 animations:^{
+
+        self.topTableViewConstraint.constant = self.originalTopConstant;
+        self.filterBar.frame = self.hiddenFrame;
+        self.filterBar.alpha = 0.0;
+        [self.view layoutIfNeeded];
+
+    }];
+
+    [self loadDB:@"*"];
+    
+}
+
+- (void)showFilterBar
+{
+
+    [UIView animateWithDuration:0.2 animations:^{
+
+        self.topTableViewConstraint.constant = self.topTableViewConstraint.constant + self.filterBar.frame.size.height;
+        self.filterBar.frame = self.notHiddenFrame;
+        self.filterBar.alpha = 1.0;
+        [self.view layoutIfNeeded];
+        
+    }];
+
+    [self onFiltered:self.filterToggle];
+}
 
 #pragma mark - segue life cycle
 
