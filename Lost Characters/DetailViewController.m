@@ -8,13 +8,19 @@
 
 #import "DetailViewController.h"
 
-@interface DetailViewController ()
+@interface DetailViewController () <UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate>
 @property (strong, nonatomic) IBOutlet UITextField *passengerTextField;
 @property (strong, nonatomic) IBOutlet UITextField *actorTextField;
 @property (strong, nonatomic) IBOutlet UITextField *akaTextField;
 @property (strong, nonatomic) IBOutlet UITextField *ageTextField;
 @property (strong, nonatomic) IBOutlet UITextField *originTextField;
-@property (strong, nonatomic) IBOutlet UIView *textFieldBorder;
+@property (strong, nonatomic) IBOutlet UITextField *sigTextField;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *backButton;
+
+@property (strong, nonatomic) IBOutlet UIPickerView *sigPicker;
+@property NSArray *pickerList;
+@property float screenWidth;
+@property float screenHeight;
 
 @end
 
@@ -29,10 +35,122 @@
     self.akaTextField.text = [self.character valueForKey:@"aka"];
     self.ageTextField.text = [self.character valueForKey:@"age"];
     self.originTextField.text = [self.character valueForKey:@"origin"];
+    if (self.character)
+    {
+        self.sigTextField.text = [self.character valueForKey:@"significance"];
+    }
+
+    self.backButton = [[UIBarButtonItem alloc]
+                                   initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                   target:self
+                                   action:@selector(onCancelButtonPressed:)];
+
+    self.navigationItem.leftBarButtonItem = self.backButton;
 
 }
 
+- (void)viewDidLayoutSubviews
+{
+
+    self.pickerList = @[@"Main Character", @"Supporting Character"];
+
+    // preselect picker to character's significance
+
+    for (int i = 0; i < self.pickerList.count; i++)
+    {
+        if ([self.pickerList[i] isEqualToString:[self.character valueForKey:@"significance"]])
+        {
+            [self.sigPicker selectRow:i inComponent:0 animated:YES];
+        }
+    }
+
+
+    self.screenHeight = [UIScreen mainScreen].bounds.size.height;
+    self.screenWidth = [UIScreen mainScreen].bounds.size.width;
+
+    [self.view addSubview:self.sigPicker];
+    self.view.autoresizesSubviews = NO;
+
+    [self.sigPicker setFrame:CGRectMake(0, self.screenHeight, self.screenWidth, self.sigPicker.frame.size.height)];
+
+}
+
+#pragma mark - text field delegate methods
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    if ([textField isEqual:self.sigTextField])
+    {
+        return NO;
+    }
+    else
+    {
+        return YES;
+    }
+}
+
+#pragma mark - picker view delegate methods
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return self.pickerList.count;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    return self.pickerList[row];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    self.sigTextField.text = self.pickerList[row];
+    [self hidePicker];
+}
+
 #pragma mark - IBActions
+
+- (IBAction)doneEditing:(UITextField *)sender
+{
+    [sender resignFirstResponder];
+}
+
+- (IBAction)onSigTextFieldTapped:(UITextField *)sender
+{
+
+    if (self.sigPicker.frame.origin.y == self.screenHeight)
+    {
+
+        [self showPicker];
+
+    }
+    else
+    {
+
+        [self hidePicker];
+
+    }
+
+}
+
+- (IBAction)onCancelButtonPressed:(UINavigationItem *)sender
+{
+
+    if (self.character == nil)
+    {
+         [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    else
+    {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        [self.sigPicker removeFromSuperview];
+    }
+
+}
 
 - (IBAction)onSaveButtonPressed:(UIButton *)sender
 {
@@ -67,11 +185,39 @@
         [self.character setValue:self.originTextField.text forKey:@"origin"];
     }
 
+    [self.character setValue:self.sigTextField.text forKey:@"significance"];
+
     [self.moc save:nil];
-    
+
     [self.navigationController popToRootViewControllerAnimated:YES];
     [self dismissViewControllerAnimated:YES completion:nil];
+    [self.sigPicker removeFromSuperview];
 
 }
+
+#pragma mark - helper methods
+
+- (void)showPicker
+{
+
+    [UIView animateWithDuration:0.2 animations:^{
+
+        float y = self.screenHeight - self.sigPicker.frame.size.height;
+        [self.sigPicker setFrame:CGRectMake(0, y, self.screenWidth, self.sigPicker.frame.size.height)];
+
+    }];
+}
+
+- (void)hidePicker
+{
+    [UIView animateWithDuration:0.2 animations:^{
+
+        [self.sigPicker setFrame:CGRectMake(0, self.screenHeight, self.screenWidth, self.sigPicker.frame.size.height)];
+
+    }];
+}
+
+#pragma mark - navigation
+
 
 @end

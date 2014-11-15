@@ -318,13 +318,17 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
 
-    DetailViewController *vc = segue.destinationViewController;
+    DetailViewController *vc = [[DetailViewController alloc] init];
 
     if ([segue.identifier isEqualToString:@"editSegue"])
     {
-
+        vc = segue.destinationViewController;
         vc.character = self.characters[[self.tableView indexPathForSelectedRow].row];
-
+    }
+    else
+    {
+        UINavigationController *navVC = segue.destinationViewController;
+        vc = navVC.childViewControllers.firstObject;
     }
 
     vc.moc = self.moc;
