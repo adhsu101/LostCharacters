@@ -103,6 +103,7 @@
     CharacterTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     cell.characterLabel.text = [character valueForKey:@"passenger"];
 //    cell.avatarView.image = [UIImage imageNamed:@"lost"];
+    cell.avatarView.image = [UIImage imageWithData:[character valueForKey:@"image"]];
     cell.actorLabel.text = [character valueForKey:@"actor"];
     cell.akaLabel.text = [character valueForKey:@"aka"];
     cell.originLabel.text = [character valueForKey:@"origin"];
@@ -136,7 +137,13 @@
     cell.avatarView.image = info[UIImagePickerControllerOriginalImage];
     [picker dismissViewControllerAnimated:YES completion:nil];
 
+    NSManagedObject *character = self.characters[self.indexPathForAvatar.row];
+    [character setValue:UIImagePNGRepresentation(info[UIImagePickerControllerOriginalImage]) forKey:@"image"];
+
+    [self.moc save:nil];
+
     [self.tableView reloadData];
+
 }
 
 #pragma mark - gesture recognizer methods

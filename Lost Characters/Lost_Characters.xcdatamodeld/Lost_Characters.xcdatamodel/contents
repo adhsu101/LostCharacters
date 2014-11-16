@@ -4,11 +4,12 @@
         <attribute name="actor" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="age" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="aka" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="origin" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="passenger" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="significance" optional="YES" attributeType="String" defaultValueString="Main Character" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Character" positionX="-63" positionY="-18" width="128" height="135"/>
+        <element name="Character" positionX="-63" positionY="-18" width="128" height="150"/>
     </elements>
 </model>
