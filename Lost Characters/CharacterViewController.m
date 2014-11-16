@@ -34,7 +34,8 @@
 
 @property NSIndexPath *indexPathForAvatar;
 @property UIImagePickerController *imagePicker;
-@property UILongPressGestureRecognizer *longPress;
+
+@property (strong, nonatomic) IBOutlet UILongPressGestureRecognizer *longPress;
 
 @end
 
@@ -122,10 +123,6 @@
     {
         cell.sigLabel.text = @"MAIN";
     }
-
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(chooseImageActionSheet)];
-    longPress.delegate = self;
-    [cell.avatarView addGestureRecognizer:longPress];
 
     return cell;
 }
@@ -261,6 +258,20 @@
     {
         [self loadDB:@"Supporting Character"];
     }
+}
+
+- (IBAction)onImageLongPressed:(UILongPressGestureRecognizer *)sender
+{
+    CGPoint location = [sender locationInView:self.tableView];
+    self.indexPathForAvatar = [self.tableView indexPathForRowAtPoint:location];
+
+    if (self.longPress.state == UIGestureRecognizerStateBegan)
+    {
+        UIActionSheet *chooseImageSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Choose avatar", @"Remove avatar", nil];
+        chooseImageSheet.destructiveButtonIndex = 1;
+        [chooseImageSheet showInView:self.view];
+    }
+
 }
 
 #pragma mark - helper methods
@@ -408,21 +419,6 @@
     [self onFiltered:self.filterToggle];
 }
 
-- (void)chooseImageActionSheet
-{
-    if (self.longPress.state == UIGestureRecognizerStateBegan)
-    {
-        UIActionSheet *chooseImageSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Choose avatar", @"Remove avatar", nil];
-        chooseImageSheet.destructiveButtonIndex = 1;
-        [chooseImageSheet showInView:self.view];
-    }
-//    else
-//    {
-//        self.longPress.state
-//    }
-
-}
-
 #pragma mark - segue life cycle
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
@@ -456,12 +452,5 @@
     vc.moc = self.moc;
     
 }
-
-//- (IBAction)unwindSegue:(UIStoryboardSegue *)sender
-//{
-//
-//    [self loadDB];
-//
-//}
 
 @end

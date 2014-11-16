@@ -27,12 +27,15 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="EoG-jJ-riO" id="SiT-Hf-Lb6">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Dgh-gp-hoB">
+                                                <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Dgh-gp-hoB">
                                                     <rect key="frame" x="8" y="5" width="110" height="110"/>
                                                     <gestureRecognizers/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="110" id="Gop-WE-dTS"/>
                                                     </constraints>
+                                                    <connections>
+                                                        <outletCollection property="gestureRecognizers" destination="1ba-Gk-ho7" appends="YES" id="L43-nu-TtD"/>
+                                                    </connections>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Character" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WWU-3y-bRe">
                                                     <rect key="frame" x="126" y="8" width="161" height="21"/>
@@ -177,6 +180,7 @@
                         <outlet property="filterButton" destination="XTc-vW-vgW" id="anG-eb-KFj"/>
                         <outlet property="filterSegmentedControl" destination="UQQ-6r-qzK" id="SqI-V0-rNO"/>
                         <outlet property="filterToggle" destination="UQQ-6r-qzK" id="WtP-hm-7yV"/>
+                        <outlet property="longPress" destination="1ba-Gk-ho7" id="wF3-MX-sdW"/>
                         <outlet property="tableView" destination="dfw-eA-8k5" id="tam-FA-HQ7"/>
                         <outlet property="topTableViewConstraint" destination="W1E-1m-L6i" id="j8V-yw-aHs"/>
                     </connections>
@@ -203,6 +207,12 @@
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="YDW-p2-urv"/>
                     </items>
                 </toolbar>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="1ba-Gk-ho7">
+                    <connections>
+                        <action selector="onImageLongPressed:" destination="vXZ-lx-hvc" id="Eva-xh-yo4"/>
+                        <outlet property="delegate" destination="vXZ-lx-hvc" id="KpY-uu-UIP"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="667" y="366"/>
         </scene>

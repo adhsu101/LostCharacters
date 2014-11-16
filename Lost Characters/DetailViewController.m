@@ -99,6 +99,7 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
     self.sigTextField.text = self.pickerList[row];
+    [self.sigTextField resignFirstResponder];
 //    [self hidePicker];
 }
 
