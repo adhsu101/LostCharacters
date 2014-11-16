@@ -15,5 +15,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *akaLabel;
 @property (strong, nonatomic) IBOutlet UILabel *originLabel;
 @property (strong, nonatomic) IBOutlet UILabel *ageLabel;
+@property (strong, nonatomic) IBOutlet UILabel *sigLabel;
 
 @end

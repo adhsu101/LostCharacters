@@ -12,7 +12,7 @@
 #import "CharacterTableViewCell.h"
 #define kFilterBarOffsetFromTopLayout 64
 
-@interface CharacterViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate, UIBarPositioningDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface CharacterViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate, UIBarPositioningDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate>
 
 @property NSManagedObjectContext *moc;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
@@ -77,7 +77,7 @@
 
     // refresh screen
 
-    [self loadDB:@"*"];
+    [self hideFilterBar];
 
     if (self.characters.count == 0)
     {
@@ -102,16 +102,30 @@
     NSManagedObject *character = self.characters[indexPath.row];
     CharacterTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     cell.characterLabel.text = [character valueForKey:@"passenger"];
-//    cell.avatarView.image = [UIImage imageNamed:@"lost"];
-    cell.avatarView.image = [UIImage imageWithData:[character valueForKey:@"image"]];
+    if ([character valueForKey:@"image"] == nil)
+    {
+        cell.avatarView.image = [UIImage imageNamed:@"lost"];
+    }
+    else
+    {
+        cell.avatarView.image = [UIImage imageWithData:[character valueForKey:@"image"]];
+    }
     cell.actorLabel.text = [character valueForKey:@"actor"];
     cell.akaLabel.text = [character valueForKey:@"aka"];
     cell.originLabel.text = [character valueForKey:@"origin"];
     cell.ageLabel.text = [character valueForKey:@"age"];
+    if ([[character valueForKey:@"significance"] isEqualToString:@"Supporting Character"])
+    {
+        cell.sigLabel.text = @"SUPPORTING";
+    }
+    else
+    {
+        cell.sigLabel.text = @"MAIN";
+    }
 
-    self.longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(chooseImage)];
-    self.longPress.delegate = self;
-    [cell.avatarView addGestureRecognizer:self.longPress];
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(chooseImageActionSheet)];
+    longPress.delegate = self;
+    [cell.avatarView addGestureRecognizer:longPress];
 
     return cell;
 }
@@ -148,21 +162,54 @@
 
 #pragma mark - gesture recognizer methods
 
-//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
-//{
-//
-//    return YES;
-//
-//}
-
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    if ([gestureRecognizer isMemberOfClass:[UILongPressGestureRecognizer class]])
-    {
-        self.indexPathForAvatar = [self.tableView indexPathForCell:(UITableViewCell *)[gestureRecognizer.view superview].superview];
-    }
+
+    self.indexPathForAvatar = [self.tableView indexPathForCell:(UITableViewCell *)[gestureRecognizer.view superview].superview];
+
+    self.longPress = (UILongPressGestureRecognizer *)gestureRecognizer;
 
     return YES;
+
+}
+
+
+#pragma mark - Action sheet delegate methods
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+
+    switch (buttonIndex) {
+        case 0:
+        {
+
+            self.imagePicker = [[UIImagePickerController alloc] init];
+            self.imagePicker.delegate = self;
+
+            self.imagePicker.allowsEditing = YES;
+            self.imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+
+            [self presentViewController:self.imagePicker animated:YES completion:nil];
+
+            break;
+        }
+            case 1:
+        {
+
+            NSManagedObject *character = self.characters[self.indexPathForAvatar.row];
+
+            [character setValue:nil forKey:@"image"];
+            [self.moc save:nil];
+            CharacterTableViewCell *cell = (CharacterTableViewCell *)[self.tableView cellForRowAtIndexPath:self.indexPathForAvatar];
+            cell.avatarView.image = [UIImage imageNamed:@"lost"];
+
+            break;
+        }
+
+        default:
+            break;
+    }
+
 }
 
 #pragma mark - IBActions
@@ -361,17 +408,19 @@
     [self onFiltered:self.filterToggle];
 }
 
-- (void)chooseImage
+- (void)chooseImageActionSheet
 {
+    if (self.longPress.state == UIGestureRecognizerStateBegan)
+    {
+        UIActionSheet *chooseImageSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Choose avatar", @"Remove avatar", nil];
+        chooseImageSheet.destructiveButtonIndex = 1;
+        [chooseImageSheet showInView:self.view];
+    }
+//    else
+//    {
+//        self.longPress.state
+//    }
 
-    self.imagePicker = [[UIImagePickerController alloc] init];
-    self.imagePicker.delegate = self;
-
-    self.imagePicker.allowsEditing = YES;
-    self.imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-
-    [self presentViewController:self.imagePicker animated:YES completion:nil];
-    
 }
 
 #pragma mark - segue life cycle

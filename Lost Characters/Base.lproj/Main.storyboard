@@ -70,10 +70,22 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vNA-pp-nAw">
+                                                    <rect key="frame" x="8" y="94" width="110" height="21"/>
+                                                    <color key="backgroundColor" red="0.26243638990000001" green="0.81107264759999997" blue="0.8598896265" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="21" id="kVc-8V-sVC"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="9"/>
+                                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="bottomMargin" secondItem="Dgh-gp-hoB" secondAttribute="bottom" constant="-3.5" id="28T-lp-Gtb"/>
+                                                <constraint firstItem="Dgh-gp-hoB" firstAttribute="bottom" secondItem="vNA-pp-nAw" secondAttribute="bottom" id="2mv-VU-l4r"/>
                                                 <constraint firstItem="IKZ-NG-Vaa" firstAttribute="top" secondItem="8cz-5z-LHk" secondAttribute="bottom" constant="26" id="47e-xK-YUu"/>
+                                                <constraint firstItem="Dgh-gp-hoB" firstAttribute="leading" secondItem="vNA-pp-nAw" secondAttribute="leading" id="8iq-uk-sdb"/>
                                                 <constraint firstItem="Dgh-gp-hoB" firstAttribute="top" secondItem="SiT-Hf-Lb6" secondAttribute="topMargin" constant="-3" id="9hs-l3-Qe0"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="WWU-3y-bRe" secondAttribute="bottom" constant="82.5" id="AFb-W0-zpz"/>
                                                 <constraint firstItem="eRz-Ph-GF7" firstAttribute="top" secondItem="hxG-XJ-8Jc" secondAttribute="bottom" constant="17" id="AIv-iP-29O"/>
@@ -88,6 +100,7 @@
                                                 <constraint firstItem="WWU-3y-bRe" firstAttribute="leading" secondItem="Dgh-gp-hoB" secondAttribute="trailing" constant="8" symbolic="YES" id="UgX-g3-VkA"/>
                                                 <constraint firstItem="hxG-XJ-8Jc" firstAttribute="trailing" secondItem="IKZ-NG-Vaa" secondAttribute="trailing" id="UxL-jG-Zxg"/>
                                                 <constraint firstAttribute="trailing" secondItem="8cz-5z-LHk" secondAttribute="trailing" id="VJ7-rB-3I0"/>
+                                                <constraint firstItem="Dgh-gp-hoB" firstAttribute="trailing" secondItem="vNA-pp-nAw" secondAttribute="trailing" id="Y6r-Wx-x3i"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="IKZ-NG-Vaa" secondAttribute="bottom" constant="15.5" id="aGU-gI-awl"/>
                                                 <constraint firstItem="hxG-XJ-8Jc" firstAttribute="leading" secondItem="IKZ-NG-Vaa" secondAttribute="leading" id="h9d-PJ-CzK"/>
                                                 <constraint firstItem="hxG-XJ-8Jc" firstAttribute="leading" secondItem="8cz-5z-LHk" secondAttribute="leading" id="okm-wZ-Yp0"/>
@@ -102,6 +115,7 @@
                                             <outlet property="avatarView" destination="Dgh-gp-hoB" id="Joj-bx-lsI"/>
                                             <outlet property="characterLabel" destination="WWU-3y-bRe" id="HAw-2k-6kt"/>
                                             <outlet property="originLabel" destination="eRz-Ph-GF7" id="K3h-Ux-EvO"/>
+                                            <outlet property="sigLabel" destination="vNA-pp-nAw" id="FaG-oE-UEf"/>
                                             <segue destination="ZcV-SV-JIA" kind="push" identifier="editSegue" id="GLh-S1-zmu"/>
                                         </connections>
                                     </tableViewCell>
