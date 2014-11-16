@@ -171,6 +171,7 @@
 
 - (void)checkEmpty
 {
+
     if (self.characters.count == 0)
     {
         self.editButton.enabled = NO;
@@ -180,15 +181,6 @@
         self.editButton.enabled = YES;
     }
     
-    if (self.characters.count <= 1)
-    {
-        self.filterButton.enabled = NO;
-        [self hideFilterBar];
-    }
-    else
-    {
-        self.filterButton.enabled = YES;
-    }
 }
 
 - (void)loadDB:(NSString *)significance
@@ -302,7 +294,7 @@
     }];
 
     [self loadDB:@"*"];
-    
+
 }
 
 - (void)showFilterBar

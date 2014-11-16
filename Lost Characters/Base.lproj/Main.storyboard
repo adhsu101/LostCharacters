@@ -147,7 +147,7 @@
                                 <action selector="onFilterButtonPressed:" destination="vXZ-lx-hvc" id="llX-au-zB4"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Edit" id="ZT2-h2-VxX">
+                        <barButtonItem key="rightBarButtonItem" title="Kill" id="ZT2-h2-VxX">
                             <connections>
                                 <action selector="onEditButtonPressed:" destination="vXZ-lx-hvc" id="Bsb-JP-RDH"/>
                             </connections>
