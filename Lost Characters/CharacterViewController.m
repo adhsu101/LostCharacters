@@ -12,7 +12,7 @@
 #import "CharacterTableViewCell.h"
 #define kFilterBarOffsetFromTopLayout 64
 
-@interface CharacterViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate, UIBarPositioningDelegate>
+@interface CharacterViewController () <UITableViewDelegate, UITableViewDataSource, UIToolbarDelegate, UIBarPositioningDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property NSManagedObjectContext *moc;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
@@ -32,6 +32,9 @@
 @property CGRect hiddenFrame;
 @property CGRect notHiddenFrame;
 
+@property NSIndexPath *indexPathForAvatar;
+@property UIImagePickerController *imagePicker;
+@property UILongPressGestureRecognizer *longPress;
 
 @end
 
@@ -83,6 +86,10 @@
 
 }
 
+- (void)viewDidLayoutSubviews
+{
+}
+
 #pragma mark - table view delegate methods
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -95,11 +102,15 @@
     NSManagedObject *character = self.characters[indexPath.row];
     CharacterTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     cell.characterLabel.text = [character valueForKey:@"passenger"];
-    cell.avatarView.image = [UIImage imageNamed:@"lost"];
+//    cell.avatarView.image = [UIImage imageNamed:@"lost"];
     cell.actorLabel.text = [character valueForKey:@"actor"];
     cell.akaLabel.text = [character valueForKey:@"aka"];
     cell.originLabel.text = [character valueForKey:@"origin"];
     cell.ageLabel.text = [character valueForKey:@"age"];
+
+    self.longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(chooseImage)];
+    self.longPress.delegate = self;
+    [cell.avatarView addGestureRecognizer:self.longPress];
 
     return cell;
 }
@@ -114,6 +125,37 @@
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return @"Smoke monster!";
+}
+
+#pragma mark - image picker delegate methods
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+
+    CharacterTableViewCell *cell = (CharacterTableViewCell *)[self.tableView cellForRowAtIndexPath:self.indexPathForAvatar];
+    cell.avatarView.image = info[UIImagePickerControllerOriginalImage];
+    [picker dismissViewControllerAnimated:YES completion:nil];
+
+    [self.tableView reloadData];
+}
+
+#pragma mark - gesture recognizer methods
+
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+//{
+//
+//    return YES;
+//
+//}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if ([gestureRecognizer isMemberOfClass:[UILongPressGestureRecognizer class]])
+    {
+        self.indexPathForAvatar = [self.tableView indexPathForCell:(UITableViewCell *)[gestureRecognizer.view superview].superview];
+    }
+
+    return YES;
 }
 
 #pragma mark - IBActions
@@ -310,6 +352,19 @@
     }];
 
     [self onFiltered:self.filterToggle];
+}
+
+- (void)chooseImage
+{
+
+    self.imagePicker = [[UIImagePickerController alloc] init];
+    self.imagePicker.delegate = self;
+
+    self.imagePicker.allowsEditing = YES;
+    self.imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+
+    [self presentViewController:self.imagePicker animated:YES completion:nil];
+    
 }
 
 #pragma mark - segue life cycle
